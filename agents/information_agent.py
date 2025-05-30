@@ -17,6 +17,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from services.weather_api import WeatherService
 from services.car_rental_api import CarRentalService
 from services.fuel_price_api import get_gas_price
+from services.places_api import EnhancedPlacesService
 
 
 def format_duration(seconds):
@@ -55,7 +56,7 @@ class InformationAgent:
         self.rapidapi_key = car_api_key or os.getenv("RAPIDAPI_KEY")
 
         # OpenStreetMap Service - NO API KEY REQUIRED!
-        print("🌍 Using OpenStreetMap instead of Google Maps - 100% FREE!")
+        print("🌍 Using OpenStreetMap")
         self.osm_service = self._create_osm_service()
         self.poi_api = self._create_poi_api()
         self.weather_service = WeatherService()
@@ -91,7 +92,6 @@ class InformationAgent:
 
             def geocode(self, address: str):
                 try:
-                    time.sleep(1)  # Rate limiting
                     params = {'q': address, 'format': 'json', 'limit': 5}
                     response = self.session.get(f"{self.nominatim_url}/search", params=params, timeout=10)
                     response.raise_for_status()
@@ -137,7 +137,6 @@ class InformationAgent:
                     out center;
                     """
 
-                    time.sleep(1)  # Rate limiting
                     response = self.session.get(self.overpass_url, params={'data': query}, timeout=30)
                     response.raise_for_status()
 
@@ -199,7 +198,6 @@ class InformationAgent:
                     coords = f"{start['lng']},{start['lat']};{end['lng']},{end['lat']}"
                     url = f"{self.osrm_url}/route/v1/{profile}/{coords}"
 
-                    time.sleep(1)
                     response = self.session.get(url, timeout=15)
                     response.raise_for_status()
 
@@ -411,9 +409,114 @@ class InformationAgent:
         sort_by: str = "rating",
         radius: int = 10000,
     ):
-        """Get a list of attractions for a given location, ranked by LLM based on user preferences and weather."""
+        """Get a list of attractions for a given location, using enhanced multi-source search with images."""
+
+        # Initialize enhanced places service
+        if not hasattr(self, 'enhanced_places_service'):
+            self.enhanced_places_service = EnhancedPlacesService()
+
+        city = user_prefs.get('city', 'Unknown City')
+
+        try:
+            print(f"[INFO_AGENT] Searching for attractions in {city} using enhanced multi-source search...")
+
+            # Use enhanced places service to get attractions from multiple sources
+            enhanced_attractions = self.enhanced_places_service.search_attractions(
+                city=city,
+                lat=lat,
+                lng=lng,
+                categories=['tourist_attraction', 'museum', 'park', 'landmark', 'gallery'],
+                limit=number * 2,  # Get more for better LLM ranking
+            )
+
+            print(f"[INFO_AGENT] Found {len(enhanced_attractions)} attractions from enhanced search.")
+
+            # Convert to format expected by the rest of the system
+            formatted_attractions = []
+            for attraction in enhanced_attractions:
+                try:
+                    # Ensure all required fields are present
+                    formatted_attraction = {
+                        'id': attraction.get('id', f"enhanced_{hash(attraction.get('name', 'unknown'))}"),
+                        'name': attraction.get('name', 'Unknown Place'),
+                        'rating': float(attraction.get('rating', 3.5)),
+                        'user_ratings_total': attraction.get('user_ratings_total', 50),
+                        'price_level': attraction.get('price_level', 1),
+                        'opening_hours': attraction.get('opening_hours'),
+                        'address': attraction.get('address', ''),
+                        'location': {
+                            'lat': (
+                                float(attraction['location']['lat'])
+                                if attraction.get('location', {}).get('lat')
+                                else lat
+                            ),
+                            'lng': (
+                                float(attraction['location']['lng'])
+                                if attraction.get('location', {}).get('lng')
+                                else lng
+                            ),
+                        },
+                        'category': attraction.get('category', 'tourist_attraction'),
+                        'types': attraction.get('types', ['tourist_attraction']),
+                        'estimated_duration': attraction.get('estimated_duration', 2.0),
+                        'website': attraction.get('website', ''),
+                        'description': attraction.get('description', f'Popular attraction in {city}'),
+                        'photo_references': [],
+                        'image_url': None,
+                        'source': attraction.get('source', 'enhanced'),
+                        'photos': attraction.get('photos', []),  # New: Include photos from enhanced search
+                    }
+
+                    # Set image_url from photos if available
+                    if formatted_attraction['photos']:
+                        formatted_attraction['image_url'] = formatted_attraction['photos'][0].get('url')
+
+                    formatted_attractions.append(formatted_attraction)
+
+                except Exception as e:
+                    print(f"[ERROR] Error formatting attraction {attraction.get('name', 'Unknown')}: {e}")
+                    continue
+
+            print(f"[INFO_AGENT] Formatted {len(formatted_attractions)} attractions for ranking.")
+
+            # Apply LLM ranking if available
+            if user_prefs and self.llm and formatted_attractions:
+                print(f"[INFO_AGENT] Re-ranking {len(formatted_attractions)} attractions with LLM.")
+                try:
+                    llm_ranked_pois = self._rerank_attractions_with_llm(
+                        formatted_attractions, user_prefs, weather_summary or ""
+                    )
+                    return llm_ranked_pois[:number]
+                except Exception as e:
+                    print(f"[ERROR] LLM ranking failed: {e}. Using default sorting.")
+
+            # Fall back to sorting by rating and source quality
+            print(f"[INFO_AGENT] Using default sorting by rating and source quality.")
+
+            # Sort by rating, then by source quality
+            formatted_attractions.sort(
+                key=lambda x: (
+                    x.get('rating', 0),
+                    1 if x.get('source') == 'foursquare' else 2 if x.get('source') == 'opentripmap' else 3,
+                ),
+                reverse=True,
+            )
+
+            return formatted_attractions[:number]
+
+        except Exception as e:
+            print(f"[ERROR] Enhanced attraction search failed: {e}")
+            print("[INFO_AGENT] Falling back to basic OSM search...")
+
+            # Fallback to original OSM method if enhanced search fails
+            return self._get_attractions_fallback(
+                lat, lng, user_prefs, weather_summary, number, poi_type, sort_by, radius
+            )
+
+    def _get_attractions_fallback(self, lat, lng, user_prefs, weather_summary, number, poi_type, sort_by, radius):
+        """Fallback method using original OSM search"""
         location = (lat, lng)
-        initial_fetch_limit = 30  # Fetch more initially to allow for better LLM ranking
+        initial_fetch_limit = 30
 
         try:
             results = self.osm_service.places_nearby(
@@ -424,112 +527,55 @@ class InformationAgent:
             results = []
 
         initial_pois = []
-        print(f"[INFO_AGENT] Fetched {len(results)} raw places. Processing up to {initial_fetch_limit} for details.")
-
-        # Define the fields to request from Place Details API.
-        # 'types' and 'photos' are not valid for Place Details 'fields' parameter.
-        # 'types' are available from the places_nearby result.
-        # 'photos' (photo_references) are available from places_nearby result.
-        place_details_fields = [
-            'name',
-            'rating',
-            'price_level',
-            'opening_hours',
-            'formatted_address',
-            'geometry/location',  # Basic geometry is sufficient
-            'place_id',  # Essential
-            'user_ratings_total',
-            'website',
-            'editorial_summary',
-            'international_phone_number',
-            'permanently_closed',
-            'business_status',
-            # Valid photo field is 'photo', but it returns an array of photo objects.
-            # It's often better to get photo_references from nearby_search and construct URLs.
-        ]
+        print(f"[INFO_AGENT] Fallback: Fetched {len(results)} raw places.")
 
         for place in results[:initial_fetch_limit]:
             pid = place.get('place_id')
             if not pid:
                 continue
             try:
-                # Get types directly from the 'place' object from nearby search
                 place_types_list = place.get('types', ["unknown"])
                 primary_category_from_place = place_types_list[0] if place_types_list else "unknown"
 
-                # Get photo references directly from the 'place' object
-                photo_references_from_place = []
-                if place.get('photos'):
-                    for photo_info_nearby in place['photos'][:1]:  # Get first photo reference
-                        if photo_info_nearby.get('photo_reference'):
-                            photo_references_from_place.append(photo_info_nearby['photo_reference'])
-
-                # Fetch details, excluding 'types' and 'photos' from fields
-                details_response = self.poi_api.get_poi_details(place_id=pid, fields=place_details_fields)
+                details_response = self.poi_api.get_poi_details(place_id=pid, fields=[])
                 details = details_response.get('result', {})
                 if not details:
-                    print(f"[WARN] No details found for place_id {pid}. Skipping.")
                     continue
 
-                # Ensure location_data is an object with lat/lng, even if values are None
                 raw_location = details.get('geometry', {}).get('location', {})
-                location_data = {'lat': raw_location.get('lat'), 'lng': raw_location.get('lng')}
-                if not isinstance(location_data['lat'], (int, float)):
-                    print(
-                        f"[WARN] Invalid or missing lat for place_id {pid}. Name: {details.get('name')}. Setting to None."
-                    )
-                    location_data['lat'] = None
-                if not isinstance(location_data['lng'], (int, float)):
-                    print(
-                        f"[WARN] Invalid or missing lng for place_id {pid}. Name: {details.get('name')}. Setting to None."
-                    )
-                    location_data['lng'] = None
+                location_data = {'lat': raw_location.get('lat', lat), 'lng': raw_location.get('lng', lng)}
 
                 description = details.get('editorial_summary', {}).get('overview', '')
                 if not description:
                     description = details.get('name', 'No description available.')
 
-                # OSM doesn't have photos like Google Maps - skip photo processing
-
                 initial_pois.append(
                     {
                         'id': pid,
-                        'name': details.get('name'),
-                        'rating': details.get('rating'),
-                        'user_ratings_total': details.get('user_ratings_total'),
-                        'price_level': details.get('price_level'),
+                        'name': details.get('name', 'Unknown Place'),
+                        'rating': details.get('rating', 3.5),
+                        'user_ratings_total': details.get('user_ratings_total', 25),
+                        'price_level': details.get('price_level', 1),
                         'opening_hours': details.get('opening_hours', {}).get('weekday_text'),
-                        'address': details.get('formatted_address'),
+                        'address': details.get('formatted_address', ''),
                         'location': location_data,
                         'category': primary_category_from_place,
                         'types': place_types_list,
                         'estimated_duration': self.estimate_duration(primary_category_from_place, details),
-                        'website': details.get('website'),
+                        'website': details.get('website', ''),
                         'description': description,
-                        'photo_references': photo_references_from_place,
+                        'photo_references': [],
                         'image_url': None,
                     }
                 )
             except Exception as e:
-                print(f"[ERROR] Exception during processing of place_id {pid} in get_attractions: {e}")
+                print(f"[ERROR] Exception during fallback processing: {e}")
                 continue
 
-        print(f"[INFO_AGENT] Processed details for {len(initial_pois)} POIs.")
-        if not initial_pois:
-            return []
+        if sort_by == 'rating':
+            initial_pois.sort(key=lambda x: x.get('rating', 0), reverse=True)
 
-        if sort_by == 'price':
-            initial_pois.sort(key=lambda x: (x.get('price_level') is None, x.get('price_level', float('inf'))))
-        elif sort_by == 'rating':
-            initial_pois.sort(key=lambda x: (x.get('rating') is None, -(float(x.get('rating', 0.0) or 0.0))))
-
-        if user_prefs and self.llm:
-            print(f"[INFO_AGENT] Re-ranking {len(initial_pois)} attractions with LLM.")
-            llm_ranked_pois = self._rerank_attractions_with_llm(initial_pois, user_prefs, weather_summary)
-            return llm_ranked_pois[:number]
-        else:
-            print(f"[INFO_AGENT] Skipping LLM re-ranking. Returning top {number} from initial sort.")
-            return initial_pois[:number]
+        return initial_pois[:number]
 
     def estimate_duration(self, category, details):
         """

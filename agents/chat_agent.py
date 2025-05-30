@@ -70,6 +70,10 @@ class ChatAgent:
         if state is None:
             state = {}
 
+        # Set default health status to "ok" if not provided
+        if "health" not in state or not state.get("health"):
+            state["health"] = "healthy"
+
         # Initialize conversation if it's empty
         if not self.conversation_history:
             self.conversation_history.append(self._init_system_message())
