@@ -517,7 +517,7 @@ class InformationAgent:
                         'website': attraction.get('website', ''),
                         'description': attraction.get('description', f'Popular attraction in {city}'),
                         'photo_references': [],
-                        'image_url': None,
+                        'image_url': '/static/images/default.jpg',
                         'source': attraction.get('source', 'enhanced'),
                         'photos': attraction.get('photos', []),  # New: Include photos from enhanced search
                     }
