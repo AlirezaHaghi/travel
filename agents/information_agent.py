@@ -91,7 +91,6 @@ class InformationAgent:
 
             def geocode(self, address: str):
                 try:
-                    time.sleep(1)  # Rate limiting
                     params = {'q': address, 'format': 'json', 'limit': 5}
                     response = self.session.get(f"{self.nominatim_url}/search", params=params, timeout=10)
                     response.raise_for_status()
@@ -137,7 +136,6 @@ class InformationAgent:
                     out center;
                     """
 
-                    time.sleep(1)  # Rate limiting
                     response = self.session.get(self.overpass_url, params={'data': query}, timeout=30)
                     response.raise_for_status()
 
@@ -199,7 +197,6 @@ class InformationAgent:
                     coords = f"{start['lng']},{start['lat']};{end['lng']},{end['lat']}"
                     url = f"{self.osrm_url}/route/v1/{profile}/{coords}"
 
-                    time.sleep(1)
                     response = self.session.get(url, timeout=15)
                     response.raise_for_status()
 

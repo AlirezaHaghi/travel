@@ -46,7 +46,6 @@ def get_gas_price(city: str) -> Optional[float]:
                     return price
                     
                 if attempt < max_attempts - 1:
-                    time.sleep(1)
                     continue
             
             print(f"❌ can't get the price of {city} after {max_attempts} attempts")
