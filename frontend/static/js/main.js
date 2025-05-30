@@ -968,7 +968,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Add initial welcome message
         addChatMessage(
-          `Welcome to your Travel AI Assistant! Tell me your name, and I'll help you plan your perfect trip. Let's start by gathering some information:
+          `Welcome to your Travel AI Assistant! I'll help you plan your perfect trip. Let's start by gathering some information:
 <ul>
   <li>Which city would you like to visit?</li>
   <li>How many days will you stay?</li>

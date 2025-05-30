@@ -333,7 +333,7 @@ class StrategyAgent:
         print(f"[DEBUG] Received user_prefs in get_ai_recommendation: {user_prefs}")  # Debug log
 
         # Create prompt for the LLM
-        name = user_name if user_name else "Traveler"
+        name = "Traveler"  # Always use a generic fallback
         spot_names = [spot["name"] for spot in selected_spots]
         days = total_days
 
@@ -343,7 +343,6 @@ class StrategyAgent:
         health_prefs = user_prefs.get('health', 'good')
         budget = user_prefs.get('budget', 'medium')
         hobbies = user_prefs.get('hobbies', '')
-        name = user_prefs.get('name', name)
 
         # Extract specific requirements if they exist
         specific_requirements = user_prefs.get('specificRequirements', '')
@@ -355,7 +354,7 @@ class StrategyAgent:
             """
 
         prompt = f"""
-        You are providing travel recommendations to {name} who is planning a {days}-day trip with the following attractions:
+        You are providing travel recommendations to a traveler who is planning a {days}-day trip with the following attractions:
         {', '.join(spot_names)}
         
         Their specific preferences are:
@@ -377,7 +376,7 @@ class StrategyAgent:
         Provide suggestions to make the trip more enjoyable based on the traveler's preferences.
         
         IMPORTANT: 
-        1. Always use SECOND PERSON perspective - speak directly TO {name}, not about them. For example, say "I recommend you..." instead of "I recommend {name} should...".
+        1. Always use SECOND PERSON perspective - speak directly TO the traveler, not about them. For example, say "I recommend you..." instead of "I recommend the traveler should...".
         2. You must include the [car_rental:YES] or [car_rental:NO] marker in your response, though this will be removed before showing to the user.
         3. Be very clear about your car rental recommendation - unambiguously state "I recommend you rent a car" or "I do not recommend you rent a car".
         4. Don't mention a car rental if you don't recommend it.
@@ -386,7 +385,7 @@ class StrategyAgent:
 
         messages = [
             SystemMessage(
-                content=f"You are a travel advisor helping {name} plan their trip. Address them directly using second person (you/your). Format your response as requested with the car rental marker."
+                content=f"You are a travel advisor helping a traveler plan their trip. Address them directly using second person (you/your). Format your response as requested with the car rental marker."
             ),
             HumanMessage(content=prompt),
         ]

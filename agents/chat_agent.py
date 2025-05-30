@@ -32,7 +32,7 @@ class ChatAgent:
             self.model = None
 
         # Define required fields (these must be filled)
-        self.required_fields = ["name", "city", "days", "budget", "people", "kids", "health", "hobbies", "start_date"]
+        self.required_fields = ["city", "days", "budget", "people", "kids", "health", "hobbies", "start_date"]
         # Define all fields, including optional ones
         self.all_fields = self.required_fields + ["specificRequirements"]
         self.conversation_history = []

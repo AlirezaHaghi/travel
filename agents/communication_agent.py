@@ -84,35 +84,21 @@ class CommunicationAgent:
 
     def generate_booking_confirmation(self, itinerary, budget_estimate, car_rental=None, user_name=None):
         """Generate booking confirmation message."""
-        itinerary_summary = f"{len(itinerary)} days, starting on {itinerary[0]['date'] if itinerary else 'N/A'}"
-        attractions_count = sum(len(day['spots']) for day in itinerary) if itinerary else 0
-        name = user_name if user_name else "Traveler"
-
-        # Only include car rental information if it's recommended
-        car_rental_prompt = f"\nCar rental: {'Yes' if car_rental else 'No'}" if car_rental else ""
-
+        name = "Traveler"  # Always use a generic fallback
         prompt = f"""
-        Generate a friendly, comprehensive trip confirmation message to {name} with the following details:
+        Generate a friendly, comprehensive trip confirmation message to the traveler with the following details:
         
-        Itinerary: {itinerary_summary}
-        Number of attractions: {attractions_count}
-        Estimated budget: ${budget_estimate['total']}{car_rental_prompt}
+        Itinerary: {itinerary}
+        Budget Estimate: {budget_estimate}
+        Car Rental: {car_rental if car_rental is not None else 'Not specified'}
         
-        The message should:
-        1. Confirm the booking is complete
-        2. Summarize the trip details
-        3. Mention that a detailed itinerary is attached
-        4. Provide any useful tips for preparation
-        5. Be friendly and excited about their upcoming trip
+        The message should be polite, clear, and address the user directly as 'you'.
         """
-
         messages = [
             SystemMessage(
-                content="You are a travel assistant called Vaiage sending a trip confirmation message. Pay attention to the email format."
+                content="You are a helpful assistant creating a trip confirmation message. Ensure all information is accurate and matches the provided details exactly."
             ),
             HumanMessage(content=prompt),
         ]
-
         response = self.model(messages)
-
         return response.content
