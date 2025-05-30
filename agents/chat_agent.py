@@ -12,7 +12,7 @@ class MockAIMessage:
 
 
 class ChatAgent:
-    def __init__(self, model_name="gpt-3.5-turbo"):
+    def __init__(self, model_name="gpt-4o-mini"):
         """Initialize the ChatAgent with specified model."""
         self.mock_mode = False
 
