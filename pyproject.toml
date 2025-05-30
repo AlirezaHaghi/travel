@@ -1,0 +1,27 @@
+[project]
+name = "vaiage"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.13"
+dependencies = [
+    "aiofiles>=24.1.0",
+    "anthropic>=0.52.1",
+    "fastapi>=0.115.12",
+    "folium>=0.19.6",
+    "geopy>=2.4.1",
+    "jinja2>=3.1.6",
+    "langchain>=0.3.25",
+    "langchain-openai>=0.3.18",
+    "networkx>=3.5",
+    "numpy>=2.2.6",
+    "openai>=1.82.0",
+    "osmpythontools>=0.3.5",
+    "overpass>=0.7.2",
+    "pandas>=2.2.3",
+    "pytest>=8.3.5",
+    "pytest-mock>=3.14.1",
+    "python-dotenv>=1.1.0",
+    "python-multipart>=0.0.20",
+    "requests>=2.32.3",
+    "uvicorn>=0.34.2",
+]

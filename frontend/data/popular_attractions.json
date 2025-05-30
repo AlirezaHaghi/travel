@@ -1,0 +1,73 @@
+[
+    {
+        "name": "Eiffel Tower",
+        "city": "Paris",
+        "country": "France",
+        "image_url": "https://images.unsplash.com/photo-1742756565106-2e0edbf37225?q=80&w=3087&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "description": "Iconic iron lattice tower."
+    },
+    {
+        "name": "Statue of Liberty",
+        "city": "New York",
+        "country": "USA",
+        "image_url": "https://plus.unsplash.com/premium_photo-1681803531285-75db948035d3?q=80&w=3087&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "description": "Symbol of freedom."
+    },
+    {
+        "name": "Great Wall",
+        "city": "Beijing",
+        "country": "China",
+        "image_url": "https://images.unsplash.com/photo-1640608486292-f52ac5d7cd76?q=80&w=3099&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "description": "Ancient defensive structure."
+    },
+    {
+        "name": "Taj Mahal",
+        "city": "Agra",
+        "country": "India",
+        "image_url": "https://images.unsplash.com/photo-1564507592333-c60657eea523",
+        "description": "Marble mausoleum."
+    },
+    {
+        "name": "Sydney Opera House",
+        "city": "Sydney",
+        "country": "Australia",
+        "image_url": "https://images.unsplash.com/photo-1606770951120-86e632c5bb52?q=80&w=2942&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "description": "Iconic performing arts center."
+    }
+    ,
+    {
+        "name": "Christ the Redeemer",
+        "city": "Rio de Janeiro",
+        "country": "Brazil",
+        "image_url": "https://images.unsplash.com/photo-1655642272518-05aaf7b8726e?q=80&w=3133&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "description": "Famous Art Deco statue of Jesus Christ."
+    },
+    {
+        "name": "Colosseum",
+        "city": "Rome",
+        "country": "Italy",
+        "image_url": "https://plus.unsplash.com/premium_photo-1661963952208-2db3512ef3de?q=80&w=3044&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "description": "Historic Roman amphitheater."
+    },
+    {
+        "name": "Machu Picchu",
+        "city": "Cusco Region",
+        "country": "Peru",
+        "image_url": "https://images.unsplash.com/photo-1587595431973-160d0d94add1?q=80&w=2952&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "description": "Incan citadel in the Andes Mountains."
+    },
+    {
+        "name": "Mount Fuji",
+        "city": "Honshu Island",
+        "country": "Japan",
+        "image_url": "https://images.unsplash.com/photo-1578637387939-43c525550085?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "description": "Iconic volcanic mountain."
+    },
+    {
+        "name": "Santorini",
+        "city": "Santorini",
+        "country": "Greece",
+        "image_url": "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?q=80&w=3238&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "description": "Picturesque island known for whitewashed buildings and blue-domed churches."
+    }
+]
