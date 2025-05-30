@@ -1,10 +1,10 @@
 # This is a code repo for Application Track of CS194
 
-![poster](Vaiage.svg "poster")
+![poster](SmartHook.svg "poster")
 
 ## Overview
 
-Vaiage is an AI-powered travel planning application designed to help users create personalized and optimized travel itineraries. It assists with everything from initial preference gathering to detailed daily plans, including attraction recommendations, route optimization, budget estimation, and car rental advice.
+SmartHook is an AI-powered travel planning application designed to help users create personalized and optimized travel itineraries. It assists with everything from initial preference gathering to detailed daily plans, including attraction recommendations, route optimization, budget estimation, and car rental advice.
 
 ## Features
 

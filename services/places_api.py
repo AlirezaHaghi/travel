@@ -125,7 +125,7 @@ class EnhancedPlacesService:
 
     def __init__(self):
         self.session = requests.Session()
-        self.session.headers.update({'User-Agent': 'Vaiage-Travel-App/1.0 (https://vaiage.com)'})
+        self.session.headers.update({'User-Agent': 'SmartHook-Travel-App/1.0 (https://smartHook.com)'})
         self.image_service = ImageSearchService()
 
         # Cache for API responses

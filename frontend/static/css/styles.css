@@ -2,38 +2,54 @@
 
 /* NEW EXTENDED COLOR DEFINITION */
 :root {
-    --vaiage-primary: #7B8DAB; /* Soft Slate Blue - Main actions, Navbar */
-    --vaiage-primary-darker: #6A7A99;
-    --vaiage-primary-lighter: #CED6E0;
-    --vaiage-accent: #FFA07A; /* Light Salmon - Accents if needed */
-    --vaiage-text-on-primary: #FFFFFF;
-    --vaiage-text-on-accent: #FFFFFF;
-    --vaiage-text-dark: #333333;
-    --vaiage-text-medium: #555555;
-    --vaiage-text-light: #777777;
-    
-    --vaiage-user-chat-bg: #FFFFFF; 
-    --vaiage-user-chat-text: var(--vaiage-text-dark);
-    --vaiage-assistant-chat-bg: #f0f4f8; 
-    --vaiage-assistant-chat-text: var(--vaiage-text-dark);
-    
-    --vaiage-border-color: #dee2e6;
+    --smartHook-primary: #7B8DAB;
+    /* Soft Slate Blue - Main actions, Navbar */
+    --smartHook-primary-darker: #6A7A99;
+    --smartHook-primary-lighter: #CED6E0;
+    --smartHook-accent: #FFA07A;
+    /* Light Salmon - Accents if needed */
+    --smartHook-text-on-primary: #FFFFFF;
+    --smartHook-text-on-accent: #FFFFFF;
+    --smartHook-text-dark: #333333;
+    --smartHook-text-medium: #555555;
+    --smartHook-text-light: #777777;
+
+    --smartHook-user-chat-bg: #FFFFFF;
+    --smartHook-user-chat-text: var(--smartHook-text-dark);
+    --smartHook-assistant-chat-bg: #f0f4f8;
+    --smartHook-assistant-chat-text: var(--smartHook-text-dark);
+
+    --smartHook-border-color: #dee2e6;
 
     /* Card Header Specific Colors */
-    --vaiage-header-chat-bg: #D6EAF8; /* Soft Pale Blue */
-    --vaiage-header-chat-text: #2E86C1; /* Darker Blue text */
-    --vaiage-header-itinerary-bg: #D5F5E3; /* Soft Mint Green */
-    --vaiage-header-itinerary-text: #28B463; /* Darker Green text */
-    --vaiage-header-recommend-bg: #FCF3CF; /* Soft Lemon Yellow */
-    --vaiage-header-recommend-text: #F39C12; /* Darker Yellow/Orange text */
-    --vaiage-header-selected-bg: #FAE5D3; /* Soft Peach */
-    --vaiage-header-selected-text: #E67E22; /* Darker Orange text */
-    --vaiage-header-map-bg: #D1F2EB; /* Soft Aqua/Cyan */
-    --vaiage-header-map-text: #16A085; /* Darker Cyan text */
-    --vaiage-header-budget-bg: #E8DAEF; /* Soft Lavender */
-    --vaiage-header-budget-text: #8E44AD; /* Darker Purple text */
-    --vaiage-header-confirmation-bg: #FADBD8; /* Soft Pink/Rose */
-    --vaiage-header-confirmation-text: #D35400; /* Darker reddish-orange text */
+    --smartHook-header-chat-bg: #D6EAF8;
+    /* Soft Pale Blue */
+    --smartHook-header-chat-text: #2E86C1;
+    /* Darker Blue text */
+    --smartHook-header-itinerary-bg: #D5F5E3;
+    /* Soft Mint Green */
+    --smartHook-header-itinerary-text: #28B463;
+    /* Darker Green text */
+    --smartHook-header-recommend-bg: #FCF3CF;
+    /* Soft Lemon Yellow */
+    --smartHook-header-recommend-text: #F39C12;
+    /* Darker Yellow/Orange text */
+    --smartHook-header-selected-bg: #FAE5D3;
+    /* Soft Peach */
+    --smartHook-header-selected-text: #E67E22;
+    /* Darker Orange text */
+    --smartHook-header-map-bg: #D1F2EB;
+    /* Soft Aqua/Cyan */
+    --smartHook-header-map-text: #16A085;
+    /* Darker Cyan text */
+    --smartHook-header-budget-bg: #E8DAEF;
+    /* Soft Lavender */
+    --smartHook-header-budget-text: #8E44AD;
+    /* Darker Purple text */
+    --smartHook-header-confirmation-bg: #FADBD8;
+    /* Soft Pink/Rose */
+    --smartHook-header-confirmation-text: #D35400;
+    /* Darker reddish-orange text */
 }
 
 /* Background image for the entire page */
@@ -44,8 +60,10 @@ body {
     background-repeat: no-repeat;
     background-attachment: fixed;
     min-height: 100vh;
-    background: rgba(255, 255, 255, 0.75); /* Slightly more opaque for better readability */
-    z-index: -1; /* Behind content */
+    background: rgba(255, 255, 255, 0.75);
+    /* Slightly more opaque for better readability */
+    z-index: -1;
+    /* Behind content */
 }
 
 /* Semi-transparent overlay for readability */
@@ -56,13 +74,17 @@ body::before {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(255, 255, 255, 0.3); /* Less opaque for better visibility */
-    z-index: -1; /* Behind content */
+    background: rgba(255, 255, 255, 0.3);
+    /* Less opaque for better visibility */
+    z-index: -1;
+    /* Behind content */
 }
 
 /* Ensure content containers have solid backgrounds */
-.card, .navbar {
-    background-color: rgba(255, 255, 255, 0.98); /* Almost fully opaque white for cards */
+.card,
+.navbar {
+    background-color: rgba(255, 255, 255, 0.98);
+    /* Almost fully opaque white for cards */
 }
 
 /* Base Styles */
@@ -93,28 +115,33 @@ body {
     border-radius: 18px;
     display: inline-block;
     max-width: 80%;
-    border: 1px solid var(--vaiage-border-color);
+    border: 1px solid var(--smartHook-border-color);
 }
 
-.user { /* Style for the container of user's message */
+.user {
+    /* Style for the container of user's message */
     /* text-align: right; REMOVED - text alignment will be handled by the content block */
-    overflow: auto; /* Or use clearfix, to contain the floated message bubble */
+    overflow: auto;
+    /* Or use clearfix, to contain the floated message bubble */
 }
 
-.user .message-content { /* Style for the actual message bubble */
-    background-color: var(--vaiage-user-chat-bg);
-    color: var(--vaiage-user-chat-text);
-    float: right; /* CHANGED back to right, to make the bubble align right */
+.user .message-content {
+    /* Style for the actual message bubble */
+    background-color: var(--smartHook-user-chat-bg);
+    color: var(--smartHook-user-chat-text);
+    float: right;
+    /* CHANGED back to right, to make the bubble align right */
     /* Text inside the bubble will naturally be left-aligned unless specified otherwise by user-agent or other rules */
     /* If text is NOT left-aligned by default inside, explicitly add: text-align: left; */
-    border-color: var(--vaiage-primary-lighter);
+    border-color: var(--smartHook-primary-lighter);
 }
 
 .assistant .message-content {
-    background-color: var(--vaiage-assistant-chat-bg);
-    color: var(--vaiage-assistant-chat-text);
+    background-color: var(--smartHook-assistant-chat-bg);
+    color: var(--smartHook-assistant-chat-text);
     float: left;
-    border-color: #d1d9e6; /* Slightly darker border for assistant */
+    border-color: #d1d9e6;
+    /* Slightly darker border for assistant */
 }
 
 /* Map styles */
@@ -127,52 +154,61 @@ body {
 .card {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
     margin-bottom: 20px;
-    background-color: #FFFFFF; /* Pure white for card bodies for max contrast */
-    border: 1px solid var(--vaiage-border-color);
+    background-color: #FFFFFF;
+    /* Pure white for card bodies for max contrast */
+    border: 1px solid var(--smartHook-border-color);
 }
 
 /* General Card Header base (padding, border, font-weight) */
 .card-header {
     padding: 0.75rem 1.25rem;
     margin-bottom: 0;
-    border-bottom: 1px solid var(--vaiage-border-color);
+    border-bottom: 1px solid var(--smartHook-border-color);
     font-weight: 600;
-    display: flex; /* Align icon and text nicely */
+    display: flex;
+    /* Align icon and text nicely */
     align-items: center;
 }
 
 .card-header i.fas {
-    margin-right: 0.5em; /* Space between icon and text */
+    margin-right: 0.5em;
+    /* Space between icon and text */
 }
 
 /* Specific Card Header Styles */
 .header-chat {
-    background-color: var(--vaiage-header-chat-bg);
-    color: var(--vaiage-header-chat-text);
+    background-color: var(--smartHook-header-chat-bg);
+    color: var(--smartHook-header-chat-text);
 }
+
 .header-itinerary {
-    background-color: var(--vaiage-header-itinerary-bg);
-    color: var(--vaiage-header-itinerary-text);
+    background-color: var(--smartHook-header-itinerary-bg);
+    color: var(--smartHook-header-itinerary-text);
 }
+
 .header-recommend {
-    background-color: var(--vaiage-header-recommend-bg);
-    color: var(--vaiage-header-recommend-text);
+    background-color: var(--smartHook-header-recommend-bg);
+    color: var(--smartHook-header-recommend-text);
 }
+
 .header-selected {
-    background-color: var(--vaiage-header-selected-bg);
-    color: var(--vaiage-header-selected-text);
+    background-color: var(--smartHook-header-selected-bg);
+    color: var(--smartHook-header-selected-text);
 }
+
 .header-map {
-    background-color: var(--vaiage-header-map-bg);
-    color: var(--vaiage-header-map-text);
+    background-color: var(--smartHook-header-map-bg);
+    color: var(--smartHook-header-map-text);
 }
+
 .header-budget {
-    background-color: var(--vaiage-header-budget-bg);
-    color: var(--vaiage-header-budget-text);
+    background-color: var(--smartHook-header-budget-bg);
+    color: var(--smartHook-header-budget-text);
 }
+
 .header-confirmation {
-    background-color: var(--vaiage-header-confirmation-bg);
-    color: var(--vaiage-header-confirmation-text);
+    background-color: var(--smartHook-header-confirmation-bg);
+    color: var(--smartHook-header-confirmation-text);
 }
 
 /* Navbar customization */
@@ -181,47 +217,52 @@ body {
     letter-spacing: 0.5px;
 }
 
-/* Navbar: uses .bg-primary which is now our main --vaiage-primary */
+/* Navbar: uses .bg-primary which is now our main --smartHook-primary */
 .navbar.bg-primary {
-    background-color: var(--vaiage-primary) !important; /* Soft Slate Blue */
+    background-color: var(--smartHook-primary) !important;
+    /* Soft Slate Blue */
 }
 
 /* Button styling */
 .btn-primary {
-    background-color: var(--vaiage-primary);
-    border-color: var(--vaiage-primary);
-    color: var(--vaiage-text-on-primary);
+    background-color: var(--smartHook-primary);
+    border-color: var(--smartHook-primary);
+    color: var(--smartHook-text-on-primary);
 }
 
-.btn-primary:hover, .btn-primary:focus {
-    background-color: var(--vaiage-primary-darker);
-    border-color: var(--vaiage-primary-darker);
-    color: var(--vaiage-text-on-primary);
+.btn-primary:hover,
+.btn-primary:focus {
+    background-color: var(--smartHook-primary-darker);
+    border-color: var(--smartHook-primary-darker);
+    color: var(--smartHook-text-on-primary);
     box-shadow: none;
 }
 
 /* Accent button style (Example, can be applied to specific buttons if needed) */
 .btn-accent {
-    background-color: var(--vaiage-accent);
-    border-color: var(--vaiage-accent);
-    color: var(--vaiage-text-on-accent);
+    background-color: var(--smartHook-accent);
+    border-color: var(--smartHook-accent);
+    color: var(--smartHook-text-on-accent);
 }
-.btn-accent:hover, .btn-accent:focus {
-    background-color: #F08080; /* Darker Coral */
+
+.btn-accent:hover,
+.btn-accent:focus {
+    background-color: #F08080;
+    /* Darker Coral */
     border-color: #F08080;
-    color: var(--vaiage-text-on-accent);
+    color: var(--smartHook-text-on-accent);
     box-shadow: none;
 }
 
 .btn-outline-primary {
-    color: var(--vaiage-primary);
-    border-color: var(--vaiage-primary);
+    color: var(--smartHook-primary);
+    border-color: var(--smartHook-primary);
 }
 
 .btn-outline-primary:hover {
-    background-color: var(--vaiage-primary);
-    border-color: var(--vaiage-primary);
-    color: var(--vaiage-text-on-primary);
+    background-color: var(--smartHook-primary);
+    border-color: var(--smartHook-primary);
+    color: var(--smartHook-text-on-primary);
 }
 
 /* Itinerary styling */
@@ -300,11 +341,11 @@ body {
     #chat-container {
         height: 300px;
     }
-    
+
     #map {
         height: 250px !important;
     }
-    
+
     .message-content {
         max-width: 90%;
     }
@@ -312,8 +353,15 @@ body {
 
 /* Animation for chat messages */
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* Custom scrollbar */
@@ -341,7 +389,7 @@ body {
     border-radius: 8px;
     padding: 15px;
     margin-bottom: 10px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .attraction-item h4 {
@@ -373,7 +421,7 @@ body {
     border-radius: 50%;
     width: 20px;
     height: 20px;
-    box-shadow: 0 0 5px rgba(0,0,0,0.3);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
 }
 
 .selected-marker-inner {
@@ -397,16 +445,25 @@ body {
     background-color: #f9f9f9;
     position: relative;
 }
+
 .scroll-content {
     animation: auto-scroll 10s linear infinite;
 }
+
 @keyframes auto-scroll {
-    0% { transform: translateY(0); }
-    100% { transform: translateY(-50%); }
+    0% {
+        transform: translateY(0);
+    }
+
+    100% {
+        transform: translateY(-50%);
+    }
 }
+
 .scroll-container:hover .scroll-content {
     animation-play-state: paused;
 }
+
 .attraction-card {
     display: flex;
     align-items: center;
@@ -414,8 +471,9 @@ body {
     padding: 10px;
     background-color: white;
     border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
 .attraction-card img {
     width: 80px;
     height: 80px;
@@ -423,13 +481,16 @@ body {
     border-radius: 5px;
     margin-right: 10px;
 }
+
 .attraction-info {
     flex: 1;
 }
+
 .attraction-info h4 {
     margin: 0;
     font-size: 16px;
 }
+
 .attraction-info p {
     margin: 5px 0;
     font-size: 14px;
@@ -438,7 +499,7 @@ body {
 
 /* Route marker styles */
 .route-marker {
-    background-color: var(--vaiage-primary);
+    background-color: var(--smartHook-primary);
     border: 2px solid white;
     border-radius: 50%;
     width: 24px;
@@ -446,14 +507,14 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .route-marker-number {
     color: white;
     font-weight: bold;
     font-size: 12px;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 /* Route polyline styles */
@@ -504,7 +565,7 @@ body {
 /* Navbar: ensure text is visible if it was relying on .text-white with old primary */
 .navbar-dark .navbar-brand,
 .navbar-dark .navbar-nav .nav-link {
-    color: var(--vaiage-text-on-primary);
+    color: var(--smartHook-text-on-primary);
 }
 
 .navbar-dark .navbar-toggler-icon {
@@ -513,25 +574,26 @@ body {
 
 /* Missing fields badge - changed from warning to a softer color */
 #missing-fields.alert-warning {
-    background-color: var(--vaiage-primary-lighter);
-    border-color: var(--vaiage-border-color);
-    color: var(--vaiage-text-medium);
+    background-color: var(--smartHook-primary-lighter);
+    border-color: var(--smartHook-border-color);
+    color: var(--smartHook-text-medium);
 }
+
 #missing-fields .badge.bg-warning {
-    background-color: var(--vaiage-primary) !important;
-    color: var(--vaiage-text-on-primary) !important;
+    background-color: var(--smartHook-primary) !important;
+    color: var(--smartHook-text-on-primary) !important;
 }
 
 /* Badge styling */
 .badge.bg-primary {
-    background-color: var(--vaiage-primary) !important;
-    color: var(--vaiage-text-on-primary) !important;
+    background-color: var(--smartHook-primary) !important;
+    color: var(--smartHook-text-on-primary) !important;
 }
 
 /* Navbar: ensure text is visible if it was relying on .text-white with old primary */
 .navbar-dark .navbar-brand,
 .navbar-dark .navbar-nav .nav-link {
-    color: var(--vaiage-text-on-primary);
+    color: var(--smartHook-text-on-primary);
 }
 
 .navbar-dark .navbar-toggler-icon {
@@ -540,11 +602,12 @@ body {
 
 /* Specifically for New Trip button */
 .btn-outline-light#reset-btn {
-    color: var(--vaiage-text-on-primary);
-    border-color: var(--vaiage-text-on-primary);
+    color: var(--smartHook-text-on-primary);
+    border-color: var(--smartHook-text-on-primary);
 }
+
 .btn-outline-light#reset-btn:hover {
-    background-color: var(--vaiage-text-on-primary);
-    color: var(--vaiage-primary);
-    border-color: var(--vaiage-text-on-primary);
+    background-color: var(--smartHook-text-on-primary);
+    color: var(--smartHook-primary);
+    border-color: var(--smartHook-text-on-primary);
 }

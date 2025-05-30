@@ -88,7 +88,7 @@ class InformationAgent:
                 self.overpass_url = "https://overpass-api.de/api/interpreter"
                 self.osrm_url = "https://router.project-osrm.org"
                 self.session = requests.Session()
-                self.session.headers.update({'User-Agent': 'Vaiage-Travel-App/1.0'})
+                self.session.headers.update({'User-Agent': 'SmartHook-Travel-App/1.0'})
 
             def geocode(self, address: str):
                 try:

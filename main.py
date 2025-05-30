@@ -14,7 +14,7 @@ import asyncio
 # Load environment variables
 load_dotenv()
 
-app = FastAPI(title="Vaiage Travel API")
+app = FastAPI(title="SmartHook Travel API")
 
 # Initialize the shared TravelGraph singleton on startup
 # This ensures agents are created once when the application starts

@@ -1252,7 +1252,7 @@ wheels = [
 ]
 
 [[package]]
-name = "vaiage"
+name = "smartHook"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
