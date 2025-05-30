@@ -7,13 +7,67 @@ class RecommendAgent:
         """Initialize RecommendAgent with AI model for personalized recommendations"""
         self.model = ChatOpenAI(model=model_name, temperature=0.7)
 
+    def _get_general_hobbies_for_city(self, city):
+        """Generate general purpose hobbies relevant to a specific city"""
+        city_lower = city.lower() if city else "unknown"
+
+        # City-specific general hobbies mapping
+        city_hobbies = {
+            'paris': 'art, museums, architecture, cafes, history',
+            'london': 'history, museums, theater, parks, culture',
+            'new york': 'architecture, Broadway shows, museums, food, shopping',
+            'tokyo': 'culture, temples, technology, food, gardens',
+            'rome': 'history, art, architecture, ancient sites, food',
+            'barcelona': 'architecture, art, beaches, food, culture',
+            'amsterdam': 'canals, museums, cycling, history, culture',
+            'berlin': 'history, museums, art, nightlife, culture',
+            'sydney': 'beaches, harbor views, nature, museums, food',
+            'san francisco': 'technology, bridges, hills, food, culture',
+            'miami': 'beaches, art, nightlife, food, architecture',
+            'las vegas': 'entertainment, shows, dining, nightlife, attractions',
+            'dubai': 'modern architecture, luxury, shopping, desert, culture',
+            'istanbul': 'history, mosques, bazaars, culture, architecture',
+            'cairo': 'ancient history, museums, pyramids, culture, archaeology',
+            'mumbai': 'culture, food, Bollywood, markets, history',
+            'bangkok': 'temples, food, markets, culture, nightlife',
+            'singapore': 'food, gardens, modern architecture, culture, shopping',
+            'hong kong': 'skyline views, food, shopping, culture, temples',
+            'seoul': 'technology, food, culture, shopping, temples',
+        }
+
+        # Check for exact matches first
+        if city_lower in city_hobbies:
+            return city_hobbies[city_lower]
+
+        # Check for partial matches (e.g., "New York City" contains "new york")
+        for key, hobbies in city_hobbies.items():
+            if key in city_lower or city_lower in key:
+                return hobbies
+
+        # Default general hobbies for unknown cities
+        return 'sightseeing, culture, history, food, architecture'
+
     def recommend_core_attractions(self, user_prefs, attractions):
         """Recommend core attractions based on user preferences"""
         # Extract preferences
         budget = user_prefs.get('budget', 'medium').lower()
         has_kids = user_prefs.get('kids', 'no').lower() == 'yes'
         health = user_prefs.get('health', 'good').lower()
-        hobbies = user_prefs.get('hobbies', '').lower()
+
+        # Get hobbies, or generate city-specific general hobbies if not provided
+        hobbies_raw = user_prefs.get('hobbies', '')
+
+        # Handle both string and list cases for hobbies
+        if isinstance(hobbies_raw, list):
+            hobbies = ', '.join(str(h) for h in hobbies_raw if h).strip().lower()
+        elif isinstance(hobbies_raw, str):
+            hobbies = hobbies_raw.strip().lower()
+        else:
+            hobbies = str(hobbies_raw).strip().lower() if hobbies_raw else ''
+
+        if not hobbies:
+            city = user_prefs.get('city', '')
+            hobbies = self._get_general_hobbies_for_city(city).lower()
 
         # Filter attractions based on preferences
         filtered_attractions = []

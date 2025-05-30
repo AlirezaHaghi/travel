@@ -2,6 +2,7 @@ import os
 from langchain_core.messages import SystemMessage, HumanMessage
 import json
 from typing import Generator
+from rich import print
 
 
 class MockAIMessage:
@@ -32,9 +33,9 @@ class ChatAgent:
             self.model = None
 
         # Define required fields (these must be filled)
-        self.required_fields = ["city", "days", "budget", "people", "kids", "health", "hobbies", "start_date"]
+        self.required_fields = ["city", "days", "budget", "people", "kids", "health", "start_date"]
         # Define all fields, including optional ones
-        self.all_fields = self.required_fields + ["specificRequirements"]
+        self.all_fields = self.required_fields + ["hobbies", "specificRequirements"]
         self.conversation_history = []
 
     def _mock_response_generator(self, message: str):
@@ -116,6 +117,7 @@ class ChatAgent:
         )
 
         try:
+            print(f"******************* Messages: {messages}")
             response = self.model.stream(messages)
             return {
                 "stream": response,

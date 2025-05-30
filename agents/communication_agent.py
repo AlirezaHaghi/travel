@@ -11,7 +11,7 @@ class CommunicationAgent:
         """Generate car rental request post."""
         # Convert duration to integer if it's a string
         duration = int(duration) if isinstance(duration, str) else duration
-
+        duration = round(duration, 2)
         # Get user preferences with defaults and proper type conversion
         num_people = (
             int(user_prefs.get('people', 1))

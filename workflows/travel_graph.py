@@ -10,18 +10,52 @@ from langchain.schema import AIMessage
 import traceback
 
 
+class TravelGraphSingleton:
+    """Singleton class to manage agent instances that are expensive to create"""
+
+    _instance = None
+    _initialized = False
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super(TravelGraphSingleton, cls).__new__(cls)
+        return cls._instance
+
+    def __init__(self):
+        if not TravelGraphSingleton._initialized:
+            print("[DEBUG] Initializing TravelGraph agents (singleton)")
+            # Initialize agents only once
+            self.info_agent = InformationAgent()
+            self.chat_agent = ChatAgent()
+            self.strategy_agent = StrategyAgent()
+            self.recommend_agent = RecommendAgent()
+            self.route_agent = RouteAgent()
+            self.comm_agent = CommunicationAgent()
+            TravelGraphSingleton._initialized = True
+            print("[DEBUG] TravelGraph agents initialized successfully")
+        else:
+            print("[DEBUG] Using existing TravelGraph agents (singleton)")
+
+
 # This is a simplified state graph manager since we're not using the actual langgraph library
 class TravelGraph:
-    def __init__(self):
-        # Initialize agents
-        self.info_agent = InformationAgent()
-        self.chat_agent = ChatAgent()
-        self.strategy_agent = StrategyAgent()
-        self.recommend_agent = RecommendAgent()
-        self.route_agent = RouteAgent()
-        self.comm_agent = CommunicationAgent()
+    _singleton = None
 
-        # Initialize state directly on the instance
+    def __init__(self, session_id=None):
+        # Get or create the singleton instance for agents
+        if TravelGraph._singleton is None:
+            TravelGraph._singleton = TravelGraphSingleton()
+
+        # Use agents from singleton
+        self.info_agent = TravelGraph._singleton.info_agent
+        self.chat_agent = TravelGraph._singleton.chat_agent
+        self.strategy_agent = TravelGraph._singleton.strategy_agent
+        self.recommend_agent = TravelGraph._singleton.recommend_agent
+        self.route_agent = TravelGraph._singleton.route_agent
+        self.comm_agent = TravelGraph._singleton.comm_agent
+
+        # Initialize state for this session/instance
+        self.session_id = session_id
         self.state = {
             "user_info": {},
             "attractions": [],
@@ -32,6 +66,15 @@ class TravelGraph:
             "budget": {},
             "ai_recommendation_generated": False,
         }
+
+        print(f"[DEBUG] Created TravelGraph instance for session: {session_id}")
+
+    @classmethod
+    def get_shared_agents(cls):
+        """Get the shared agent instances"""
+        if cls._singleton is None:
+            cls._singleton = TravelGraphSingleton()
+        return cls._singleton
 
     def process_step(self, step_name, **kwargs):
         print(f"[DEBUG] Processing step {step_name}")

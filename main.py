@@ -6,6 +6,7 @@ from pydantic import BaseModel
 from typing import Optional, List
 import os
 import json
+import uuid
 from dotenv import load_dotenv
 from workflows.travel_graph import TravelGraph
 import asyncio
@@ -15,9 +16,31 @@ load_dotenv()
 
 app = FastAPI(title="Vaiage Travel API")
 
+# Initialize the shared TravelGraph singleton on startup
+# This ensures agents are created once when the application starts
+print("[STARTUP] Initializing shared TravelGraph agents...")
+_shared_graph = TravelGraph.get_shared_agents()
+print("[STARTUP] Shared TravelGraph agents initialized successfully")
+
 # Setup static files and templates
 app.mount("/static", StaticFiles(directory="frontend/static"), name="static")
 templates = Jinja2Templates(directory="frontend/templates")
+
+# In-memory session storage (in production, use Redis or similar)
+session_storage = {}
+
+
+def get_or_create_session(session_id: Optional[str] = None) -> TravelGraph:
+    """Get existing session or create a new one with shared agents"""
+    if session_id is None:
+        session_id = str(uuid.uuid4())
+
+    if session_id not in session_storage:
+        # Create new session-specific TravelGraph instance that uses shared agents
+        session_storage[session_id] = TravelGraph(session_id=session_id)
+        print(f"[DEBUG] Created new session: {session_id}")
+
+    return session_storage[session_id]
 
 
 # Pydantic models for request bodies
@@ -25,12 +48,14 @@ class ProcessRequest(BaseModel):
     step: Optional[str] = "chat"
     user_input: Optional[str] = ""
     selected_attraction_ids: Optional[List[str]] = None
+    session_id: Optional[str] = None
 
 
 class StreamParams(BaseModel):
     step: Optional[str] = "chat"
     user_input: Optional[str] = ""
     selected_attraction_ids: Optional[str] = None
+    session_id: Optional[str] = None
 
 
 @app.get("/test-image")
@@ -62,10 +87,10 @@ async def index(request: Request):
 async def process(request: Request, data: ProcessRequest):
     """Process a step in the travel planning workflow"""
     try:
-        # Create a new workflow instance for each request
-        workflow = TravelGraph()
+        # Get or create workflow instance for this session
+        workflow = get_or_create_session(data.session_id)
 
-        print(f"[DEBUG] Processing step: {data.step}")
+        print(f"[DEBUG] Processing step: {data.step} for session: {workflow.session_id}")
 
         # Process the current step
         result = workflow.process_step(
@@ -74,8 +99,9 @@ async def process(request: Request, data: ProcessRequest):
             selected_attraction_ids=data.selected_attraction_ids,
         )
 
-        # Add the current state to the result
+        # Add the current state and session_id to the result
         result['state'] = workflow.get_current_state()
+        result['session_id'] = workflow.session_id
         return JSONResponse(content=result)
 
     except Exception as e:
@@ -84,11 +110,13 @@ async def process(request: Request, data: ProcessRequest):
 
 
 @app.get("/api/attractions/{city}")
-async def get_attractions(city: str, request: Request):
+async def get_attractions(city: str, request: Request, session_id: Optional[str] = None):
     """Get attractions for a specific city"""
-    # Create a new workflow instance
-    workflow = TravelGraph()
+    # Get or create workflow instance for this session
+    workflow = get_or_create_session(session_id)
     info_agent = workflow.info_agent
+
+    print(f"[DEBUG] Getting attractions for {city} - session: {workflow.session_id}")
 
     # Convert city to coordinates
     city_coordinates = info_agent.city2geocode(city)
@@ -112,20 +140,58 @@ async def get_attractions(city: str, request: Request):
 
 
 @app.get("/api/reset")
-async def reset_session(request: Request):
-    """Reset endpoint - returns success since we don't maintain sessions"""
-    return JSONResponse(content={"status": "reset successful"})
+async def reset_session(request: Request, session_id: Optional[str] = None):
+    """Reset a specific session or create a new one"""
+    if session_id and session_id in session_storage:
+        # Reset existing session
+        session_storage[session_id] = TravelGraph(session_id=session_id)
+        print(f"[DEBUG] Reset session: {session_id}")
+    else:
+        # Create new session
+        new_session = get_or_create_session()
+        session_id = new_session.session_id
+        print(f"[DEBUG] Created new session: {session_id}")
+
+    return JSONResponse(content={"status": "reset successful", "session_id": session_id})
+
+
+@app.get("/api/sessions")
+async def get_sessions_status():
+    """Get information about active sessions and shared agents"""
+    return JSONResponse(
+        content={
+            "active_sessions": len(session_storage),
+            "session_ids": list(session_storage.keys()),
+            "shared_agents_initialized": TravelGraph._singleton is not None,
+            "singleton_id": id(TravelGraph._singleton) if TravelGraph._singleton else None,
+        }
+    )
+
+
+@app.delete("/api/sessions/{session_id}")
+async def delete_session(session_id: str):
+    """Delete a specific session"""
+    if session_id in session_storage:
+        del session_storage[session_id]
+        print(f"[DEBUG] Deleted session: {session_id}")
+        return JSONResponse(content={"status": "session deleted", "session_id": session_id})
+    else:
+        raise HTTPException(status_code=404, detail="Session not found")
 
 
 @app.get("/api/stream")
 async def stream(
-    request: Request, step: str = "chat", user_input: str = "", selected_attraction_ids: Optional[str] = None
+    request: Request,
+    step: str = "chat",
+    user_input: str = "",
+    selected_attraction_ids: Optional[str] = None,
+    session_id: Optional[str] = None,
 ):
     """Handle streaming responses"""
-    # Create a new workflow instance
-    workflow = TravelGraph()
+    # Get or create workflow instance for this session
+    workflow = get_or_create_session(session_id)
 
-    print(f"[DEBUG] Streaming step: {step}")
+    print(f"[DEBUG] Streaming step: {step} for session: {workflow.session_id}")
 
     # Parse selected_attraction_ids if provided
     parsed_attraction_ids = None
@@ -207,11 +273,13 @@ async def stream(
 
 
 @app.get("/api/nearby/{attraction_id}")
-async def get_nearby_places(attraction_id: str, request: Request):
+async def get_nearby_places(attraction_id: str, request: Request, session_id: Optional[str] = None):
     """Get nearby restaurants and street information for an attraction"""
-    # Create a new workflow instance
-    workflow = TravelGraph()
+    # Get or create workflow instance for this session
+    workflow = get_or_create_session(session_id)
     info_agent = workflow.info_agent
+
+    print(f"[DEBUG] Getting nearby places for {attraction_id} - session: {workflow.session_id}")
 
     # Parse coordinates from attraction_id
     try:
